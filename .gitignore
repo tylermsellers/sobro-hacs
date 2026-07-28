@@ -7,6 +7,7 @@ __pycache__/
 
 # Node
 mock-server/node_modules/
+mock-server/fixtures/
 
 # Editor
 .vscode/
