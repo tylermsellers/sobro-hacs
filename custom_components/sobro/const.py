@@ -27,6 +27,46 @@ DEFAULT_ADS_URL = "https://ads-field.aylanetworks.com"
 DEFAULT_APP_ID = "sobro-ag-id"
 DEFAULT_APP_SECRET = "sobro-mDM8M4JEe7IJFwiKvbs956XqX_s"
 
+# ── Product identification & imagery ─────────────────────────────────────────
+# Ayla's /apiv1/devices.json returns "product_name" / "oem_model" per device.
+# Sobro currently sells two smart-furniture designs. We match on these fields
+# (case-insensitively, best-effort — the exact values were never officially
+# documented) to show a friendlier model name and, where confidently matched,
+# a product photo entity.
+#
+# IMPORTANT: these photo URLs point directly at sobrodesign.com's own product
+# pages. This repository does NOT download, store, or redistribute SOBRO's
+# commercial product photography — the URL is only ever used as a plain
+# ``entity_picture`` value, which the Home Assistant frontend renders as a
+# browser-side hotlink (an <img src="..."> fetched by the user's own
+# browser directly from sobrodesign.com). Do not switch this to the
+# ``image`` platform / ImageEntity, which would make Home Assistant's own
+# server download and cache a copy of the image — that crosses from linking
+# into redistribution.
+PRODUCT_MODEL_COFFEE_TABLE = "Smart Coffee Table"
+PRODUCT_MODEL_SIDE_TABLE = "Smart Side Table"
+PRODUCT_MODEL_UNKNOWN = "Smart Furniture"
+
+PRODUCT_IMAGE_COFFEE_TABLE = (
+    "https://sobrodesign.com/cdn/shop/products/Sobro_for_Amazon_White_1.jpg"
+)
+PRODUCT_IMAGE_SIDE_TABLE = "https://sobrodesign.com/cdn/shop/products/SOSTB300BKBK_2.jpg"
+
+
+def guess_product(product_name: str | None, oem_model: str | None) -> tuple[str, str | None]:
+    """Best-effort match of an Ayla device to a known Sobro model + photo URL.
+
+    Falls back to a generic model name and no photo if neither field
+    contains a recognisable keyword.
+    """
+    haystack = f"{product_name or ''} {oem_model or ''}".lower()
+    if "coffee" in haystack:
+        return PRODUCT_MODEL_COFFEE_TABLE, PRODUCT_IMAGE_COFFEE_TABLE
+    if "side" in haystack:
+        return PRODUCT_MODEL_SIDE_TABLE, PRODUCT_IMAGE_SIDE_TABLE
+    return PRODUCT_MODEL_UNKNOWN, None
+
+
 # ── Polling ───────────────────────────────────────────────────────────────────
 SCAN_INTERVAL = 60  # seconds
 

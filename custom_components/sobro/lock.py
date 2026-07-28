@@ -7,12 +7,11 @@ from typing import Any
 
 from homeassistant.components.lock import LockEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import SobroConfigEntry
-from .const import DOMAIN, PROP_DRAWER_LOCK
+from .const import PROP_DRAWER_LOCK
 from .coordinator import SobroCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -44,12 +43,7 @@ class SobroDrawerLock(CoordinatorEntity[SobroCoordinator], LockEntity):
     def __init__(self, coordinator: SobroCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.dsn}_drawer_lock"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, coordinator.dsn)},
-            name=coordinator.device_name,
-            manufacturer="Sobro",
-            model="Smart Furniture",
-        )
+        self._attr_device_info = coordinator.device_info
 
     @property
     def is_locked(self) -> bool | None:

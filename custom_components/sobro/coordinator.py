@@ -6,10 +6,11 @@ import logging
 from datetime import timedelta
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import PropertyData, SobroApiClient, SobroApiError, SobroAuthError
-from .const import DOMAIN, SCAN_INTERVAL
+from .const import DOMAIN, PRODUCT_MODEL_UNKNOWN, SCAN_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,6 +29,8 @@ class SobroCoordinator(DataUpdateCoordinator[dict[str, PropertyData]]):
         client: SobroApiClient,
         dsn: str,
         device_name: str,
+        model: str = PRODUCT_MODEL_UNKNOWN,
+        image_url: str | None = None,
     ) -> None:
         super().__init__(
             hass,
@@ -40,6 +43,21 @@ class SobroCoordinator(DataUpdateCoordinator[dict[str, PropertyData]]):
         self.client = client
         self.dsn = dsn
         self.device_name = device_name
+        self.model = model
+        # A URL on sobrodesign.com's own CDN, or None if the model couldn't be
+        # confidently matched. See const.guess_product for details on why this
+        # is only ever used as a hotlink, never downloaded into this repo.
+        self.image_url = image_url
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Shared DeviceInfo for every entity belonging to this device."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.dsn)},
+            name=self.device_name,
+            manufacturer="Sobro",
+            model=self.model,
+        )
 
     async def _async_update_data(self) -> dict[str, PropertyData]:
         try:

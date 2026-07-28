@@ -40,6 +40,7 @@ from .const import (
     DEFAULT_APP_SECRET,
     DEFAULT_AUTH_URL,
     DOMAIN,
+    guess_product,
 )
 from .coordinator import SobroCoordinator
 
@@ -104,7 +105,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: SobroConfigEntry) -> boo
         if not dsn:
             continue
         name: str = device.get("product_name") or device.get("device_name") or f"Sobro {dsn}"
-        coordinator = SobroCoordinator(hass, client, dsn, name)
+        model, image_url = guess_product(device.get("product_name"), device.get("oem_model"))
+        coordinator = SobroCoordinator(hass, client, dsn, name, model=model, image_url=image_url)
         try:
             await coordinator.async_config_entry_first_refresh()
         except Exception:

@@ -7,12 +7,11 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import SobroConfigEntry
-from .const import DOMAIN, PROP_BLE_SWITCH, PROP_COOLING
+from .const import PROP_BLE_SWITCH, PROP_COOLING
 from .coordinator import SobroCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,15 +32,6 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-def _device_info(coordinator: SobroCoordinator) -> DeviceInfo:
-    return DeviceInfo(
-        identifiers={(DOMAIN, coordinator.dsn)},
-        name=coordinator.device_name,
-        manufacturer="Sobro",
-        model="Smart Furniture",
-    )
-
-
 class _SobroSwitch(CoordinatorEntity[SobroCoordinator], SwitchEntity):
     """Base class for simple boolean Sobro switches."""
 
@@ -50,7 +40,7 @@ class _SobroSwitch(CoordinatorEntity[SobroCoordinator], SwitchEntity):
 
     def __init__(self, coordinator: SobroCoordinator) -> None:
         super().__init__(coordinator)
-        self._attr_device_info = _device_info(coordinator)
+        self._attr_device_info = coordinator.device_info
 
     @property
     def is_on(self) -> bool | None:

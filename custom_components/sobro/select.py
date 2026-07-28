@@ -6,13 +6,11 @@ import logging
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import SobroConfigEntry
 from .const import (
-    DOMAIN,
     FLIGHT_AUTO_MODE_OPTIONS,
     FLIGHT_AUTO_MODE_TO_VALUE,
     FLIGHT_AUTO_VALUE_TO_MODE,
@@ -54,12 +52,7 @@ class SobroFrontAutoMode(CoordinatorEntity[SobroCoordinator], SelectEntity):
     def __init__(self, coordinator: SobroCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.dsn}_front_auto_mode"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, coordinator.dsn)},
-            name=coordinator.device_name,
-            manufacturer="Sobro",
-            model="Smart Furniture",
-        )
+        self._attr_device_info = coordinator.device_info
 
     @property
     def current_option(self) -> str | None:

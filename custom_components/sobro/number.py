@@ -8,12 +8,11 @@ from typing import Any
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.const import UnitOfTime
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import SobroConfigEntry
-from .const import DOMAIN, PROP_FLIGHT_STATUS, format_flight_status, parse_flight_status
+from .const import PROP_FLIGHT_STATUS, format_flight_status, parse_flight_status
 from .coordinator import SobroCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,12 +50,7 @@ class SobroFrontDuration(CoordinatorEntity[SobroCoordinator], NumberEntity):
     def __init__(self, coordinator: SobroCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.dsn}_front_duration"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, coordinator.dsn)},
-            name=coordinator.device_name,
-            manufacturer="Sobro",
-            model="Smart Furniture",
-        )
+        self._attr_device_info = coordinator.device_info
 
     @property
     def native_value(self) -> float | None:

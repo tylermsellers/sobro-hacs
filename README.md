@@ -126,7 +126,28 @@ the official Sobro app, and enter them manually in the config flow.
 | Front Light Duration | `number` | `flight_status` field C |
 | Front Light Auto Mode | `select` | `flight_status` field A |
 | Firmware Version | `sensor` | `version` (diagnostic) |
+| Product Model | `sensor` | derived from `product_name`/`oem_model` (diagnostic) |
 | *(other raw props)* | `sensor` | various (diagnostic, disabled by default) |
+
+### Device images
+
+Each device is created with a `model` (e.g. "Smart Coffee Table" or "Smart
+Side Table") matched from the Ayla API's `product_name`/`oem_model` fields —
+this is what Home Assistant shows on the device page instead of a generic
+"Smart Furniture" placeholder.
+
+When a model is confidently matched, a diagnostic **Product Model** sensor
+is also created with its `entity_picture` pointing directly at that
+product's photo on `sobrodesign.com`. This is a plain hotlink — the Home
+Assistant frontend fetches the image straight from SOBRO's own server in
+the user's browser. This repository does not download, cache, or
+redistribute a copy of SOBRO's product photography anywhere.
+
+There is currently no icon/logo for this integration in the community
+[`home-assistant/brands`](https://github.com/home-assistant/brands) repo
+(what controls the icon shown in the HACS list and the Integrations page),
+so a generic icon is shown there. A brands submission is a possible future
+improvement but isn't required for the integration to work.
 
 ### flight_status format
 

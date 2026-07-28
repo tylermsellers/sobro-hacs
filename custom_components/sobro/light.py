@@ -28,7 +28,6 @@ from homeassistant.components.light import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util.color import color_hs_to_RGB, color_RGB_to_hs
@@ -36,7 +35,6 @@ from homeassistant.util.color import color_hs_to_RGB, color_RGB_to_hs
 from . import SobroConfigEntry
 from .api import PropertyData
 from .const import (
-    DOMAIN,
     FLIGHT_COLOR_TEMP_MAX_K,
     FLIGHT_COLOR_TEMP_MIN_K,
     PROP_BACK_KEY,
@@ -70,15 +68,6 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-def _device_info(coordinator: SobroCoordinator) -> DeviceInfo:
-    return DeviceInfo(
-        identifiers={(DOMAIN, coordinator.dsn)},
-        name=coordinator.device_name,
-        manufacturer="Sobro",
-        model="Smart Furniture",
-    )
-
-
 class SobroFrontLight(CoordinatorEntity[SobroCoordinator], LightEntity):
     """Front under-cabinet / ambient light.
 
@@ -97,7 +86,7 @@ class SobroFrontLight(CoordinatorEntity[SobroCoordinator], LightEntity):
     def __init__(self, coordinator: SobroCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.dsn}_front_light"
-        self._attr_device_info = _device_info(coordinator)
+        self._attr_device_info = coordinator.device_info
 
     @property
     def is_on(self) -> bool | None:
@@ -181,7 +170,7 @@ class SobroBackLight(CoordinatorEntity[SobroCoordinator], LightEntity):
     def __init__(self, coordinator: SobroCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.dsn}_back_light"
-        self._attr_device_info = _device_info(coordinator)
+        self._attr_device_info = coordinator.device_info
 
     @property
     def is_on(self) -> bool | None:
