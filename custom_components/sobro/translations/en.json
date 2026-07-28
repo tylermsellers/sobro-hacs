@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Connect to your Sobro device",
-        "description": "Enter your Ayla Networks credentials.  These are the same credentials used by the Sobro mobile app.\n\nFor local/mock-server mode, override the Base URL fields to point at your local server (e.g. `http://192.168.1.100:3000`).",
+        "description": "Enter your Ayla Networks credentials.  These are the same credentials used by the Sobro mobile app.  App ID and App Secret are pre-filled with the values the official Sobro app uses (confirmed via the JoeBro reverse-engineering project) — only change them if Ayla/StoreBound rotates them.\n\nFor local/mock-server mode, override the Base URL fields to point at your local server (e.g. `http://192.168.1.100:3000`).",
         "data": {
           "email": "Email address",
           "password": "Password",
@@ -13,8 +13,8 @@
           "ads_url": "ADS Base URL (advanced)"
         },
         "data_description": {
-          "app_id": "Obtain via HTTP Toolkit interception — see REVERSE_ENGINEERING.md",
-          "app_secret": "Obtain via HTTP Toolkit interception — see REVERSE_ENGINEERING.md",
+          "app_id": "Pre-filled with the known Sobro app client ID; override only if it stops working",
+          "app_secret": "Pre-filled with the known Sobro app client secret; override only if it stops working",
           "auth_url": "Leave blank to use the default Ayla cloud endpoint",
           "ads_url": "Leave blank to use the default Ayla cloud endpoint"
         }

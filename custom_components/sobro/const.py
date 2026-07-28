@@ -17,6 +17,16 @@ CONF_ADS_URL = "ads_url"
 DEFAULT_AUTH_URL = "https://user-field.aylanetworks.com"
 DEFAULT_ADS_URL = "https://ads-field.aylanetworks.com"
 
+# ── Ayla app credentials ──────────────────────────────────────────────────────
+# These are the fixed client credentials the official Sobro mobile app embeds
+# for every user — they are not per-account secrets. Confirmed via the JoeBro
+# project's reverse engineering (github.com/nextgenredteam/joebro) and used
+# here as the config flow defaults so most users never have to hunt for them
+# with a MITM proxy. Still overridable in case StoreBound/Ayla ever rotates
+# them or a different Sobro product line uses a different app_id.
+DEFAULT_APP_ID = "sobro-ag-id"
+DEFAULT_APP_SECRET = "sobro-mDM8M4JEe7IJFwiKvbs956XqX_s"
+
 # ── Polling ───────────────────────────────────────────────────────────────────
 SCAN_INTERVAL = 60  # seconds
 

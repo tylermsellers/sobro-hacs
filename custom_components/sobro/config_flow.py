@@ -35,6 +35,8 @@ from .const import (
     CONF_EMAIL,
     CONF_PASSWORD,
     DEFAULT_ADS_URL,
+    DEFAULT_APP_ID,
+    DEFAULT_APP_SECRET,
     DEFAULT_AUTH_URL,
     DOMAIN,
 )
@@ -48,8 +50,16 @@ def _user_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
         {
             vol.Required(CONF_EMAIL, default=d.get(CONF_EMAIL, "")): str,
             vol.Required(CONF_PASSWORD): str,
-            vol.Required(CONF_APP_ID, default=d.get(CONF_APP_ID, "")): str,
-            vol.Required(CONF_APP_SECRET): str,
+            # App ID / Secret are the same for every Sobro app user (confirmed
+            # via the JoeBro reverse-engineering project) so they are
+            # pre-filled and only need changing if Ayla/StoreBound rotates
+            # them for a future firmware/app release.
+            vol.Optional(
+                CONF_APP_ID, default=d.get(CONF_APP_ID, DEFAULT_APP_ID)
+            ): str,
+            vol.Optional(
+                CONF_APP_SECRET, default=d.get(CONF_APP_SECRET, DEFAULT_APP_SECRET)
+            ): str,
             vol.Optional(
                 CONF_AUTH_URL, default=d.get(CONF_AUTH_URL, DEFAULT_AUTH_URL)
             ): str,
@@ -67,8 +77,8 @@ async def _validate_credentials(hass: Any, data: dict[str, Any]) -> list[dict]:
         session=session,
         email=data[CONF_EMAIL],
         **{"pass" + "word": data[CONF_PASSWORD]},
-        app_id=data[CONF_APP_ID],
-        app_secret=data[CONF_APP_SECRET],
+        app_id=data.get(CONF_APP_ID, DEFAULT_APP_ID),
+        app_secret=data.get(CONF_APP_SECRET, DEFAULT_APP_SECRET),
         auth_url=data.get(CONF_AUTH_URL, DEFAULT_AUTH_URL),
         ads_url=data.get(CONF_ADS_URL, DEFAULT_ADS_URL),
     )

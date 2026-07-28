@@ -1,10 +1,34 @@
 # Sobro Smart Furniture — Home Assistant Integration
 
 [![HACS Custom Repository](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://hacs.xyz)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Home Assistant integration for Sobro Smart Furniture (nightstands, coffee
 tables).  Uses the Ayla Networks cloud API — the same API the Sobro mobile
 app uses.
+
+---
+
+## Credit / Origin
+
+This project is a **Home Assistant / HACS-focused fork** of
+[**JoeBro**](https://github.com/nextgenredteam/joebro) by **Joe Brinkley**
+([NextGenRedTeam](https://nextgenredteam.com/)). All of the Ayla Networks
+API reverse-engineering this integration relies on — endpoint shapes, the
+property map (`Cooling_switch`, `Drawer_lock`, `F_key`, `B_key`,
+`ble_switch`, `brightness`, `flight_status`, `mode_status`), the
+`mode_status` RGB bit-packing scheme, and the app's client credentials —
+originates from that project and its accompanying write-up, [Rescuing
+Abandoned IoT: the JoeBro Sobro Table
+Rescue](https://nextgenredteam.com/blog/rescuing-abandoned-iot-joebro-sobro.html).
+
+JoeBro itself is a standalone browser-based PWA controller plus a
+Docker/Pi-hole based local mock API. This repository re-implements that same
+reverse-engineered protocol as a native Home Assistant custom component so
+Sobro devices can be managed through HA instead of (or alongside) the
+JoeBro PWA. All credit for discovering how the Sobro/Ayla API works belongs
+to Joe Brinkley and the JoeBro project — please go star/support the
+[original repository](https://github.com/nextgenredteam/joebro).
 
 ---
 
@@ -37,9 +61,13 @@ sobro-hacs/
   README.md
 ```
 
-> **Important:** `mock-server/` is a completely separate piece.  HACS's
-> custom-repository flow only looks at `custom_components/sobro/manifest.json`
-> — the mock server directory has no effect on installation.
+> **Important:** `mock-server/` is a completely separate piece, inspired by
+> (but independent from) JoeBro's own `mock-api/`. HACS's custom-repository
+> flow only looks at `custom_components/sobro/manifest.json` — the mock
+> server directory has no effect on installation, is never published as
+> part of the HACS integration, and must be set up and run separately if
+> you want it (see [Local mock server](#local-mock-server-development--local-control)
+> below).
 
 ---
 
@@ -58,24 +86,31 @@ sobro-hacs/
 
 The config flow collects:
 
+
 | Field | Description |
 |-------|-------------|
 | **Email** | Ayla Networks account email (same as Sobro app) |
 | **Password** | Ayla Networks account password |
-| **App ID** | Client app ID (see *Obtaining credentials* below) |
-| **App Secret** | Client app secret |
+| **App ID** | Client app ID — pre-filled with the known Sobro value, see below |
+| **App Secret** | Client app secret — pre-filled with the known Sobro value, see below |
 | **Auth Base URL** *(advanced)* | Default: `https://user-field.aylanetworks.com` |
 | **ADS Base URL** *(advanced)* | Default: `https://ads-field.aylanetworks.com` |
 
 On submit, the integration signs in and auto-discovers all Sobro devices
 on your account.  Each device (DSN) appears as a separate HA device.
 
-### Obtaining App ID and App Secret
+### App ID and App Secret
 
-The Sobro mobile app embeds these values.  Capture them with
-[HTTP Toolkit](https://httptoolkit.com/) or a similar MITM proxy while
-performing a login.  See `REVERSE_ENGINEERING.md` for the exact request
-shape and confirmed values.
+The Sobro mobile app embeds a single fixed `app_id`/`app_secret` pair that
+is the same for every user (it is not a per-account secret) — the
+[JoeBro project](https://github.com/nextgenredteam/joebro) reverse-engineered
+and published these values, and the config flow pre-fills them for you
+(`custom_components/sobro/const.py` → `DEFAULT_APP_ID` /
+`DEFAULT_APP_SECRET`), so most users never need to touch these fields.
+
+If Ayla/StoreBound ever rotates them, you can still capture new values with
+[HTTP Toolkit](https://httptoolkit.com/) or a similar MITM proxy while using
+the official Sobro app, and enter them manually in the config flow.
 
 ---
 
@@ -107,7 +142,7 @@ shape and confirmed values.
 ### mode_status RGB packing
 
 ```python
-packed = (G << 23) | (B << 15) | (R << 7) + effect_offset
+packed = ((G << 23) | (B << 15) | (R << 7)) + effect_offset
 # effect_offset: Constant=4, Pulse=8, Cycle=12, Rhythmic=16
 ```
 
@@ -160,3 +195,12 @@ mock server instead of the Ayla cloud), see the mock server README.
   because HA has no `local_mock` class.  Document caveat, don't fight the field.
 - **No `requests` dependency.** All network I/O uses `aiohttp` via HA's own
   session manager — synchronous calls would block the HA event loop.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE). This project is a derivative of
+[JoeBro](https://github.com/nextgenredteam/joebro) by Joe Brinkley /
+NextGenRedTeam; please credit and support the original project.
+

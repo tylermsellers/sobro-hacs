@@ -36,6 +36,8 @@ from .const import (
     CONF_EMAIL,
     CONF_PASSWORD,
     DEFAULT_ADS_URL,
+    DEFAULT_APP_ID,
+    DEFAULT_APP_SECRET,
     DEFAULT_AUTH_URL,
     DOMAIN,
 )
@@ -73,8 +75,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: SobroConfigEntry) -> boo
         session=session,
         email=entry.data[CONF_EMAIL],
         password=entry.data[CONF_PASSWORD],
-        app_id=entry.data[CONF_APP_ID],
-        app_secret=entry.data[CONF_APP_SECRET],
+        app_id=entry.data.get(CONF_APP_ID, DEFAULT_APP_ID),
+        app_secret=entry.data.get(CONF_APP_SECRET, DEFAULT_APP_SECRET),
         auth_url=entry.data.get(CONF_AUTH_URL, DEFAULT_AUTH_URL),
         ads_url=entry.data.get(CONF_ADS_URL, DEFAULT_ADS_URL),
     )
