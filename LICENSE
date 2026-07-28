@@ -1,11 +1,5 @@
 MIT License
 
-This project is a Home Assistant / HACS-focused fork of JoeBro
-(https://github.com/nextgenredteam/joebro) by Joe Brinkley / NextGenRedTeam,
-which reverse-engineered the Ayla Networks API used by Sobro Smart Furniture
-and is itself licensed under the MIT License. This derivative work is
-released under the same license.
-
 Copyright (c) Joe Brinkley / NextGenRedTeam (original JoeBro project)
 Copyright (c) tylermsellers (Home Assistant / HACS integration derivative)
 
