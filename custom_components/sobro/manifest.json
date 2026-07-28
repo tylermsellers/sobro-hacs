@@ -1,0 +1,11 @@
+{
+  "domain": "sobro",
+  "name": "Sobro Smart Furniture",
+  "version": "0.1.0",
+  "documentation": "https://github.com/tylermsellers/sobro-hacs",
+  "issue_tracker": "https://github.com/tylermsellers/sobro-hacs/issues",
+  "codeowners": ["@tylermsellers"],
+  "requirements": [],
+  "iot_class": "cloud_polling",
+  "config_flow": true
+}
