@@ -26,6 +26,7 @@ JoeBro itself is a standalone browser-based PWA controller plus a
 Docker/Pi-hole based local mock API. This repository re-implements that same
 reverse-engineered protocol as a native Home Assistant custom component so
 Sobro devices can be managed through HA instead of (or alongside) the
+Sobro devices can be managed through HA instead of (or alongside) the
 JoeBro PWA. All credit for discovering how the Sobro/Ayla API works belongs
 to Joe Brinkley and the JoeBro project — please go star/support the
 [original repository](https://github.com/nextgenredteam/joebro).
@@ -52,22 +53,9 @@ sobro-hacs/
       sensor.py          diagnostic properties
       translations/
         en.json
-  mock-server/           ← standalone dev server — NOT installed by HACS
-    server.js
-    Dockerfile
-    docker-compose.yml
-    README.md
   hacs.json
   README.md
 ```
-
-> **Important:** `mock-server/` is a completely separate piece, inspired by
-> (but independent from) JoeBro's own `mock-api/`. HACS's custom-repository
-> flow only looks at `custom_components/sobro/manifest.json` — the mock
-> server directory has no effect on installation, is never published as
-> part of the HACS integration, and must be set up and run separately if
-> you want it (see [Local mock server](#local-mock-server-development--local-control)
-> below).
 
 ---
 
@@ -172,30 +160,6 @@ packed = ((G << 23) | (B << 15) | (R << 7)) + effect_offset
 
 ---
 
-## Local mock server (development / local control)
-
-See [`mock-server/README.md`](mock-server/README.md) for full instructions.
-
-**Quick start:**
-
-```bash
-cd mock-server
-npm install
-node server.js
-# Running at http://0.0.0.0:3000
-```
-
-Then in HA, set both **Auth Base URL** and **ADS Base URL** to
-`http://<mock-server-ip>:3000` via the integration's **Configure** option.
-
-The mock server accepts any credentials and maintains stateful property
-values in memory (writes are reflected in subsequent reads).
-
-For Pi-hole DNS override (so the real Sobro hardware communicates with your
-mock server instead of the Ayla cloud), see the mock server README.
-
----
-
 ## Troubleshooting
 
 | Symptom | Likely cause |
@@ -215,8 +179,8 @@ mock server instead of the Ayla cloud), see the mock server README.
   same account are represented as separate HA devices under the same entry.
 - **Tokens are held in memory.** If HA restarts, the client re-authenticates
   automatically from stored credentials.
-- **`iot_class: cloud_polling`** even when pointed at a local mock server,
-  because HA has no `local_mock` class.  Document caveat, don't fight the field.
+- **`iot_class: cloud_polling`** because HA has no better-matching class for
+  this integration's polling-based cloud API.  Document caveat, don't fight the field.
 - **No `requests` dependency.** All network I/O uses `aiohttp` via HA's own
   session manager — synchronous calls would block the HA event loop.
 
