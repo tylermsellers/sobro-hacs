@@ -144,10 +144,13 @@ the user's browser. This repository does not download, cache, or
 redistribute a copy of SOBRO's product photography anywhere.
 
 There is currently no icon/logo for this integration in the community
-[`home-assistant/brands`](https://github.com/home-assistant/brands) repo
-(what controls the icon shown in the HACS list and the Integrations page),
-so a generic icon is shown there. A brands submission is a possible future
-improvement but isn't required for the integration to work.
+[`home-assistant/brands`](https://github.com/home-assistant/brands) repo,
+but that's no longer needed: as of Home Assistant 2026.3, integrations can
+ship their own brand images locally. This repo includes a simple, original
+(non-trademarked) icon at `custom_components/sobro/brand/icon.png` /
+`icon@2x.png` — a minimalist table-with-glowing-light glyph — shown on the
+Integrations page and device pages on HA 2026.3+. Older HA versions will
+still show a generic placeholder there.
 
 ### flight_status format
 
