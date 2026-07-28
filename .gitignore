@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Node
+mock-server/node_modules/
+
+# Editor
+.vscode/
+.idea/
+*.swp
